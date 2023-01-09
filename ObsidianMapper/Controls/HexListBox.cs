@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ObsidianMapper.Controls
 {
@@ -54,7 +53,6 @@ namespace ObsidianMapper.Controls
             _scrollIndex = vScrollBar1.Value;
             Invalidate();
         }
-
         private void HexListBox_MouseDown(object sender, MouseEventArgs e)
         {
             int itemIndex = HitTest(e.Location);
@@ -63,7 +61,6 @@ namespace ObsidianMapper.Controls
 
             Invalidate();
         }
-
         private void HexListBox_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             int itemIndex = HitTest(e.Location);
@@ -95,7 +92,6 @@ namespace ObsidianMapper.Controls
                 Invalidate();
             }
         }
-
         public int SelectedIndex
         {
             get => _selectedIndex;
@@ -140,7 +136,7 @@ namespace ObsidianMapper.Controls
 
                     if (itemIndex == _selectedIndex)
                     {
-                        e.Graphics.FillRectangle(Brushes.LightBlue, itemRect);
+                        e.Graphics.DrawRectangle(new Pen(Brushes.LightBlue), itemRect);
                     }
 
                     OnDrawItem(new DrawItemEventArgs(e.Graphics, Font, itemRect, itemIndex, DrawItemState.None));
@@ -163,7 +159,7 @@ namespace ObsidianMapper.Controls
 
             foreach (char c in item)
             {
-                if (c == '&')
+                if (c == '&') 
                 {
                     code = true;
 
@@ -185,7 +181,6 @@ namespace ObsidianMapper.Controls
                 }
                 else
                 {
-
                     section += c;
                 }
             }

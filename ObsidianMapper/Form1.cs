@@ -134,7 +134,15 @@ namespace ObsidianMapper
                 proc = Process.GetProcessesByName("Minecraft.Windows")[0];
             }
 
-            processHandle = Kernel32.OpenProcess(Kernel32.ProcessAccessFlags.All, false, (uint)proc.Id);
+            try
+            {
+                processHandle = Kernel32.OpenProcess(Kernel32.ProcessAccessFlags.All, false, (uint)proc.Id);
+            }
+            catch
+            {
+                MessageBox.Show("Please reattach once the game finishes launching");
+            }
+
 
             if (processHandle == UIntPtr.Zero)
             {
