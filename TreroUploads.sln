@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33122.133
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObsidianMapper", "ObsidianMapper\ObsidianMapper.csproj", "{FDCC3B49-5AF4-42F1-BDCE-77A91B5536A0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|ARM64 = Debug|ARM64
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|ARM64 = Release|ARM64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FDCC3B49-5AF4-42F1-BDCE-77A91B5536A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDCC3B49-5AF4-42F1-BDCE-77A91B5536A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDCC3B49-5AF4-42F1-BDCE-77A91B5536A0}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{FDCC3B49-5AF4-42F1-BDCE-77A91B5536A0}.Debug|ARM64.Build.0 = Debug|ARM64
+		{FDCC3B49-5AF4-42F1-BDCE-77A91B5536A0}.Debug|x64.ActiveCfg = Debug|x64
+		{FDCC3B49-5AF4-42F1-BDCE-77A91B5536A0}.Debug|x64.Build.0 = Debug|x64
+		{FDCC3B49-5AF4-42F1-BDCE-77A91B5536A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDCC3B49-5AF4-42F1-BDCE-77A91B5536A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDCC3B49-5AF4-42F1-BDCE-77A91B5536A0}.Release|ARM64.ActiveCfg = Release|ARM64
+		{FDCC3B49-5AF4-42F1-BDCE-77A91B5536A0}.Release|ARM64.Build.0 = Release|ARM64
+		{FDCC3B49-5AF4-42F1-BDCE-77A91B5536A0}.Release|x64.ActiveCfg = Release|Any CPU
+		{FDCC3B49-5AF4-42F1-BDCE-77A91B5536A0}.Release|x64.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {85487FD4-13D3-4C1C-8AEB-72B668EBFC30}
+	EndGlobalSection
+EndGlobal
