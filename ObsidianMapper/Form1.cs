@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Windows.Forms;
 
 using Microsoft.VisualBasic;
@@ -30,7 +28,6 @@ namespace ObsidianMapper
         private void AppLoad(object sender, EventArgs e)
         {
             DarkMenuStrip.Renderer = new DarkStripRenderer();
-            toolStrip1.Renderer = new DarkStripRenderer();
 
             foreach (MemoryVarType type in Enum.GetValues(typeof(MemoryVarType)))
             {
@@ -72,80 +69,6 @@ namespace ObsidianMapper
 
             memoryTypes.Add(0, MemoryVarType.uintptr_t_VT); // VTable
             memoryNames.Add(0, "VTable");
-        }
-
-        public void RefreshHexidecimal()
-        {
-            string line = "";
-            uint offset = 0x0;
-            int index = 0;
-            int lineValuesPerLine = 0;
-            int numBytes = 8;
-
-            HexListBox.SuspendLayout();
-            HexListBox.BeginUpdate();
-
-            HexListBox.Items.Clear();
-            HexListBox.Items.Add("ADDRESS: " + PROGRAM_ADDRESS.ToString("X"));
-
-            IntPtr baseAddress = new IntPtr((long)PROGRAM_ADDRESS);
-
-            byte[] buffer = new byte[PROGRAM_BYTES_READ];
-
-            int dsadsada = 0;
-            Kernel32.ReadProcessMemory(
-                processHandle,
-                baseAddress,
-                buffer,
-                PROGRAM_BYTES_READ,
-                ref dsadsada
-            );
-
-            foreach (byte bite in buffer)
-            {
-                if (!memoryTypes.ContainsKey(index))
-                    memoryTypes.Add(index, MemoryVarType.Hex64);
-
-                if (lineValuesPerLine == 0)
-                {
-                    numBytes = MemoryVarTypeData.GetSize(memoryTypes[index]) / 8;
-                }
-
-                string hex = string.Format("{0:X2}", (int)bite);
-
-                if (hex != "00")
-                    line += hex + " ";
-                else line += ".. ";
-
-                lineValuesPerLine++;
-
-                if (lineValuesPerLine == numBytes) // gonna rewrite all of this so I can list shit in any byte order I want...
-                {
-                    string item = "&g" + string.Format("{0:X2}", offset) + "&r " + line;
-                    MemoryVarType result;
-                    if (memoryTypes.TryGetValue(index, out result))
-                    {
-                        if (!result.Equals(MemoryVarType.Hex64))
-                        {
-                            if (!memoryNames.ContainsKey(index))
-                                memoryNames.Add(index, "Unknown");
-
-                            item += $" &a({memoryNames[index]}) -> {Enum.GetName(typeof(MemoryVarType), result)}";
-                        }
-                    }
-
-                    int fdfdsa = HexListBox.Items.Add(item);
-
-                    offset += (uint)lineValuesPerLine;
-                    line = "";
-                    lineValuesPerLine = 0;
-
-                    index++;
-                }
-            }
-
-            HexListBox.EndUpdate();
-            HexListBox.ResumeLayout();
         }
 
         private void HexListBoxAction(object sender, EventArgs e)
@@ -215,19 +138,84 @@ namespace ObsidianMapper
         }
         private void timer1_Tick(object sender, EventArgs e)
         {
+            string line = "";
+            uint offset = 0x0;
+            int index = 0;
+            int lineValuesPerLine = 0;
+            int numBytes = 8;
+
+            List<string> items = new List<string>(); // had to do the meths before cuz it was tearing the screen
+            items.Add("ADDRESS: " + PROGRAM_ADDRESS.ToString("X"));
+
+            IntPtr baseAddress = new IntPtr((long)PROGRAM_ADDRESS);
+
+            byte[] buffer = new byte[PROGRAM_BYTES_READ];
+
+            int dsadsada = 0;
+            Kernel32.ReadProcessMemory(
+                processHandle,
+                baseAddress,
+                buffer,
+                PROGRAM_BYTES_READ,
+                ref dsadsada
+            );
+
+            foreach (byte bite in buffer)
+            {
+                if (!memoryTypes.ContainsKey(index))
+                    memoryTypes.Add(index, MemoryVarType.Hex64);
+
+                if (lineValuesPerLine == 0)
+                {
+                    numBytes = MemoryVarTypeData.GetSize(memoryTypes[index]) / 8;
+                }
+
+                string hex = string.Format("{0:X2}", (int)bite);
+
+                if (hex != "00")
+                    line += hex + " ";
+                else line += ".. ";
+
+                lineValuesPerLine++;
+
+                if (lineValuesPerLine == numBytes) // gonna rewrite all of this so I can list shit in any byte order I want...
+                {
+                    string item = "&g" + string.Format("{0:X2}", offset) + "&r " + line;
+                    MemoryVarType result;
+                    if (memoryTypes.TryGetValue(index, out result))
+                    {
+                        if (!result.Equals(MemoryVarType.Hex64))
+                        {
+                            if (!memoryNames.ContainsKey(index))
+                                memoryNames.Add(index, "Unknown");
+
+                            item += $" &a({memoryNames[index]}) -> {Enum.GetName(typeof(MemoryVarType), result)}";
+                        }
+                    }
+
+                    items.Add(item);
+
+                    offset += (uint)lineValuesPerLine;
+                    line = "";
+                    lineValuesPerLine = 0;
+
+                    index++;
+                }
+            }
+
             int selectedIndex = HexListBox.SelectedIndex;
-
             int topIndex = HexListBox.TopIndex;
-            int itemHeight = HexListBox.ItemHeight;
-            int clientHeight = HexListBox.ClientSize.Height;
-            float scrollPos = (float)topIndex / (float)(HexListBox.Items.Count - clientHeight / itemHeight);
 
-            RefreshHexidecimal();
+            HexListBox.BeginUpdate();
 
+            HexListBox.Items.Clear();
+            foreach (string str in items)
+                HexListBox.Items.Add(str);
+
+            HexListBox.EndUpdate();
+
+            HexListBox.TopIndex = topIndex;
             HexListBox.SelectedIndex = selectedIndex;
-
-            HexListBox.TopIndex = (int)(scrollPos * (HexListBox.Items.Count - clientHeight / itemHeight));
-
         }
 
         private void generateCToolStripMenuItem_Click(object sender, EventArgs e)
@@ -235,12 +223,12 @@ namespace ObsidianMapper
             // reserved for C code stuff
         }
 
-        private void HexListBox_DrawItem(object sender, DrawItemEventArgs e)
+        private void HexListBox_DrawItem(object sender, DrawItemEventArgs e) // might have to remove this...
         {
-            e.DrawBackground();
-            e.DrawFocusRectangle();
+            if (e.Index < 0 || e.Index >= HexListBox.Items.Count) return;
 
-            if (e.Index < 0) return;
+            if (!HexListBox.GetItemRectangle(e.Index).IntersectsWith(e.Bounds))
+                return;
 
             string item = HexListBox.Items[e.Index].ToString();
 

@@ -42,7 +42,6 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.DarkMenuStrip.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -58,10 +57,10 @@
             this.memoryToolStripMenuItem,
             this.attachToolStripMenuItem,
             this.codeToolStripMenuItem});
-            this.DarkMenuStrip.Location = new System.Drawing.Point(119, 0);
+            this.DarkMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.DarkMenuStrip.Name = "DarkMenuStrip";
             this.DarkMenuStrip.Padding = new System.Windows.Forms.Padding(8, 3, 0, 3);
-            this.DarkMenuStrip.Size = new System.Drawing.Size(297, 26);
+            this.DarkMenuStrip.Size = new System.Drawing.Size(416, 26);
             this.DarkMenuStrip.TabIndex = 2;
             this.DarkMenuStrip.Text = "menuStrip1";
             // 
@@ -140,7 +139,7 @@
             this.HexListBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.HexListBox.ContextMenuStrip = this.NodeContextStrip;
             this.HexListBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.HexListBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.HexListBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
             this.HexListBox.ForeColor = System.Drawing.SystemColors.Control;
             this.HexListBox.FormattingEnabled = true;
             this.HexListBox.ItemHeight = 20;
@@ -173,7 +172,7 @@
             this.listBox1.ForeColor = System.Drawing.SystemColors.Control;
             this.listBox1.FormattingEnabled = true;
             this.listBox1.ItemHeight = 20;
-            this.listBox1.Location = new System.Drawing.Point(12, 36);
+            this.listBox1.Location = new System.Drawing.Point(12, -4);
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(91, 280);
             this.listBox1.TabIndex = 4;
@@ -181,23 +180,12 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.panel1.Controls.Add(this.toolStrip1);
             this.panel1.Controls.Add(this.listBox1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Location = new System.Drawing.Point(0, 26);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(119, 307);
+            this.panel1.Size = new System.Drawing.Size(119, 281);
             this.panel1.TabIndex = 4;
-            // 
-            // toolStrip1
-            // 
-            this.toolStrip1.AllowItemReorder = true;
-            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.toolStrip1.Size = new System.Drawing.Size(119, 25);
-            this.toolStrip1.TabIndex = 6;
             // 
             // Form1
             // 
@@ -206,8 +194,8 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
             this.ClientSize = new System.Drawing.Size(416, 307);
             this.Controls.Add(this.HexListBox);
-            this.Controls.Add(this.DarkMenuStrip);
             this.Controls.Add(this.panel1);
+            this.Controls.Add(this.DarkMenuStrip);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.SystemColors.Control;
@@ -220,7 +208,6 @@
             this.DarkMenuStrip.ResumeLayout(false);
             this.DarkMenuStrip.PerformLayout();
             this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -237,7 +224,6 @@
         private System.Windows.Forms.ToolStripMenuItem AddBytesDropdown;
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripMenuItem codeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateCToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip NodeContextStrip;
