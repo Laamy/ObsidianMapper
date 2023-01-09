@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Windows.Forms;
 
 using Microsoft.VisualBasic;
+using ObsidianMapper.Controls;
 
 namespace ObsidianMapper
 {
@@ -20,6 +21,8 @@ namespace ObsidianMapper
 
         UIntPtr processHandle = UIntPtr.Zero;
 
+        public HexListBox HexListBox = new HexListBox();
+
         public Dictionary<int, MemoryVarType> memoryTypes = new Dictionary<int, MemoryVarType>();
         public Dictionary<int, string> memoryNames = new Dictionary<int, string>();
 
@@ -28,6 +31,9 @@ namespace ObsidianMapper
         private void AppLoad(object sender, EventArgs e)
         {
             DarkMenuStrip.Renderer = new DarkStripRenderer();
+
+            Controls.Add(HexListBox);
+            HexListBox.Dock = DockStyle.Fill;
 
             foreach (MemoryVarType type in Enum.GetValues(typeof(MemoryVarType)))
             {
@@ -64,20 +70,24 @@ namespace ObsidianMapper
                 item.Click += (_sender, _e) => PROGRAM_BYTES_READ += _bytes;
             }
 
-            HexListBox.DoubleClick += HexListBoxAction;
+            HexListBox.ItemDoubleClicked += HexListBoxAction;
             HexListBox.Font = new Font("Courier New", 12f);
+
+            HexListBox.BringToFront();
+            HexListBox.AddColor('a', Brushes.ForestGreen);
+            HexListBox.AddColor('g', Brushes.Gray);
+
+            HexListBox.ContextMenuStrip = NodeContextStrip;
 
             memoryTypes.Add(0, MemoryVarType.uintptr_t_VT); // VTable
             memoryNames.Add(0, "VTable");
         }
 
-        private void HexListBoxAction(object sender, EventArgs e)
+        private void HexListBoxAction(object sender, int index)
         {
-            int index = HexListBox.IndexFromPoint(HexListBox.PointToClient(Cursor.Position));
-
             if (index != ListBox.NoMatches)
             {
-                string item = HexListBox.Items[index] as string;
+                string item = HexListBox.Items[index];
 
                 // code for when u double click a node
 
@@ -144,8 +154,10 @@ namespace ObsidianMapper
             int lineValuesPerLine = 0;
             int numBytes = 8;
 
-            List<string> items = new List<string>(); // had to do the meths before cuz it was tearing the screen
-            items.Add("ADDRESS: " + PROGRAM_ADDRESS.ToString("X"));
+            List<string> items = new List<string>
+            {
+                "ADDRESS: " + PROGRAM_ADDRESS.ToString("X")
+            }; // had to do the meths before cuz it was tearing the screen
 
             IntPtr baseAddress = new IntPtr((long)PROGRAM_ADDRESS);
 
@@ -203,19 +215,7 @@ namespace ObsidianMapper
                 }
             }
 
-            int selectedIndex = HexListBox.SelectedIndex;
-            int topIndex = HexListBox.TopIndex;
-
-            HexListBox.BeginUpdate();
-
-            HexListBox.Items.Clear();
-            foreach (string str in items)
-                HexListBox.Items.Add(str);
-
-            HexListBox.EndUpdate();
-
-            HexListBox.TopIndex = topIndex;
-            HexListBox.SelectedIndex = selectedIndex;
+            HexListBox.Items = items;
         }
 
         private void generateCToolStripMenuItem_Click(object sender, EventArgs e)
@@ -223,54 +223,8 @@ namespace ObsidianMapper
             // reserved for C code stuff
         }
 
-        private void HexListBox_DrawItem(object sender, DrawItemEventArgs e) // might have to remove this...
+        private void HexListBox_Validated(object sender, EventArgs e)
         {
-            if (e.Index < 0 || e.Index >= HexListBox.Items.Count) return;
-
-            if (!HexListBox.GetItemRectangle(e.Index).IntersectsWith(e.Bounds))
-                return;
-
-            string item = HexListBox.Items[e.Index].ToString();
-
-            // Initialize variables for drawing the string
-            float x = e.Bounds.X;
-            Brush brush = Brushes.White;
-            string section = "";
-            bool code = false;
-
-            foreach (char c in item)
-            {
-                if (c == '&')
-                {
-                    code = true;
-
-                    SizeF size = e.Graphics.MeasureString(section, e.Font);
-
-                    e.Graphics.DrawString(section, e.Font, brush, x, e.Bounds.Y);
-
-                    x += size.Width;
-
-                    section = "";
-                }
-                else if (code)
-                {
-                    if (c == 'a')
-                        brush = Brushes.Green;
-                    else if (c == 'r')
-                        brush = Brushes.White;
-                    else if (c == 'g')
-                        brush = Brushes.Gray;
-
-                    code = false;
-                }
-                else
-                {
-
-                    section += c;
-                }
-            }
-
-            e.Graphics.DrawString(section, e.Font, brush, x, e.Bounds.Y);
         }
     }
 
