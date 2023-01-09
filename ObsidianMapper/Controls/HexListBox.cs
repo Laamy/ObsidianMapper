@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ObsidianMapper.Controls
 {
@@ -44,7 +45,7 @@ namespace ObsidianMapper.Controls
             Controls.Add(vScrollBar1);
 
             vScrollBar1.Minimum = 0;
-            vScrollBar1.Maximum = _items.Count - VisibleItemCount;
+            vScrollBar1.Maximum = _items.Count;
             vScrollBar1.ValueChanged += HexListBox_Scroll;
         }
 
@@ -89,8 +90,8 @@ namespace ObsidianMapper.Controls
             {
                 _items = (List<string>)value;
 
-                vScrollBar1.Minimum = 0;
-                vScrollBar1.Maximum = _items.Count - VisibleItemCount;
+                vScrollBar1.Maximum = Math.Max(0, _items.Count - VisibleItemCount);
+                vScrollBar1.Visible = _items.Count > VisibleItemCount;
                 Invalidate();
             }
         }
