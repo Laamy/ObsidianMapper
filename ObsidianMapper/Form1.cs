@@ -202,14 +202,17 @@ namespace ObsidianMapper
                 {
                     string item = "&g" + string.Format("{0:X2}", offset) + "&r " + line;
                     MemoryVarType result;
+
+                    item += $"({(float)bite}) {(int)bite}";
+
                     if (memoryTypes.TryGetValue(index, out result))
                     {
-                        if (!result.Equals(MemoryVarType.Hex64))
+                        if (!(result.Equals(MemoryVarType.Hex64) || result.Equals(MemoryVarType.Hex32) || result.Equals(MemoryVarType.Hex16) | result.Equals(MemoryVarType.Hex8)))
                         {
                             if (!memoryNames.ContainsKey(index))
                                 memoryNames.Add(index, "Unknown");
 
-                            item += $" &a({memoryNames[index]}) -> {Enum.GetName(typeof(MemoryVarType), result)}";
+                            item += $"&a({memoryNames[index]}) -> {Enum.GetName(typeof(MemoryVarType), result)}";
                         }
                     }
 
@@ -267,6 +270,9 @@ namespace ObsidianMapper
     public enum MemoryVarType : byte
     {
         Hex64,
+        Hex32,
+        Hex16,
+        Hex8,
         Double,
         Pointer,
         uintptr_t_VT,
@@ -281,6 +287,9 @@ namespace ObsidianMapper
         private static readonly Dictionary<MemoryVarType, byte> sizes = new Dictionary<MemoryVarType, byte>
         {
             [MemoryVarType.Hex64] = 64,
+            [MemoryVarType.Hex32] = 32,
+            [MemoryVarType.Hex16] = 16,
+            [MemoryVarType.Hex8] = 8,
             [MemoryVarType.Double] = 64,
             [MemoryVarType.Pointer] = 64,
             [MemoryVarType.uintptr_t_VT] = 64,
@@ -292,7 +301,10 @@ namespace ObsidianMapper
 
         private static readonly Dictionary<MemoryVarType, string> varDefs = new Dictionary<MemoryVarType, string>
         {
-            [MemoryVarType.Hex64] = "CHAR_PADDING", // defaults to character array padding
+            [MemoryVarType.Hex64] = "CHAR_PADDING",
+            [MemoryVarType.Hex32] = "CHAR_PADDING",
+            [MemoryVarType.Hex16] = "CHAR_PADDING",
+            [MemoryVarType.Hex16] = "CHAR_PADDING", // defaults to character array padding
             [MemoryVarType.Double] = "double",
             [MemoryVarType.Pointer] = "uintptr_t*",
             [MemoryVarType.uintptr_t_VT] = "uintptr_t**",
