@@ -228,7 +228,8 @@ namespace ObsidianMapper
 
         private void generateCToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // reserved for C code stuff
+            CTextbox cDis = new CTextbox("class test {\r\npublic:\r\n   //code here\r\n};");
+            cDis.Show();
         }
 
         private void HexListBox_Validated(object sender, EventArgs e)

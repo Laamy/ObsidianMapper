@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.DarkMenuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -125,7 +126,7 @@
             this.generateCToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.generateCToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
             this.generateCToolStripMenuItem.Name = "generateCToolStripMenuItem";
-            this.generateCToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.generateCToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.generateCToolStripMenuItem.Text = "Generate C++";
             this.generateCToolStripMenuItem.Click += new System.EventHandler(this.generateCToolStripMenuItem_Click);
             // 
@@ -134,7 +135,7 @@
             this.NodeContextStrip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
             this.NodeContextStrip.Name = "NodeContextStrip";
             this.NodeContextStrip.ShowImageMargin = false;
-            this.NodeContextStrip.Size = new System.Drawing.Size(156, 26);
+            this.NodeContextStrip.Size = new System.Drawing.Size(36, 4);
             // 
             // timer1
             // 
@@ -151,11 +152,12 @@
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.SystemColors.Control;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.DarkMenuStrip;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.MinimumSize = new System.Drawing.Size(432, 346);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "ObsidianMapper";
             this.Load += new System.EventHandler(this.AppLoad);
             this.DarkMenuStrip.ResumeLayout(false);
             this.DarkMenuStrip.PerformLayout();
