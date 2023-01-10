@@ -35,9 +35,6 @@ namespace ObsidianMapper.Controls
 
             DoubleBuffered = true;
 
-            MouseDoubleClick += HexListBox_MouseDoubleClick;
-            MouseDown += HexListBox_MouseDown;
-
             vScrollBar1 = new VScrollBar();
             vScrollBar1.Dock = DockStyle.Right;
 
@@ -53,21 +50,42 @@ namespace ObsidianMapper.Controls
             _scrollIndex = vScrollBar1.Value;
             Invalidate();
         }
-        private void HexListBox_MouseDown(object sender, MouseEventArgs e)
+
+        protected override void OnMouseWheel(MouseEventArgs e)
+        {
+            int studs = vScrollBar1.Value - (e.Delta * SystemInformation.MouseWheelScrollLines / 120);
+
+            if (studs < vScrollBar1.Minimum)
+                studs = vScrollBar1.Minimum;
+
+            if (studs > vScrollBar1.Maximum)
+                studs = vScrollBar1.Maximum;
+
+            vScrollBar1.Value = studs;
+
+            Invalidate();
+
+            base.OnMouseWheel(e);
+        }
+        protected override void OnMouseDown(MouseEventArgs e)
         {
             int itemIndex = HitTest(e.Location);
 
             _selectedIndex = itemIndex;
 
             Invalidate();
+
+            base.OnMouseDown(e);
         }
-        private void HexListBox_MouseDoubleClick(object sender, MouseEventArgs e)
+        protected override void OnMouseDoubleClick(MouseEventArgs e)
         {
             int itemIndex = HitTest(e.Location);
             if (itemIndex >= 0)
             {
                 ItemDoubleClicked?.Invoke(this, itemIndex);
             }
+
+            base.OnMouseDoubleClick(e);
         }
 
         private int HitTest(Point location)
@@ -133,6 +151,8 @@ namespace ObsidianMapper.Controls
                 if (itemIndex >= _scrollIndex)
                 {
                     Rectangle itemRect = new Rectangle(0, y, ClientSize.Width, _itemHeight);
+
+                    if (!itemRect.IntersectsWith(ClientRectangle)) continue;
 
                     if (itemIndex == _selectedIndex)
                     {
