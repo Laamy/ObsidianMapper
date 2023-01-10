@@ -228,7 +228,7 @@ namespace ObsidianMapper
 
         private void generateCToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CTextbox cDis = new CTextbox("class test {\r\npublic:\r\n   //code here\r\n};");
+            CTextbox cDis = new CTextbox("class test {\r\npublic:\r\n\t//code here\r\n};");
             cDis.Show();
         }
 

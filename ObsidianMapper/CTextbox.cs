@@ -12,9 +12,12 @@ namespace ObsidianMapper
             InitializeComponent();
 
             HighlightedTextbox textbox = new HighlightedTextbox();
-            textbox.Font = new Font("Arial", 9);
-            textbox.ForeColor = Color.Black;
+            textbox.Font = new Font("Arial", 12);
             textbox.Dock = DockStyle.Fill;
+
+            textbox.AddKeyword("public", Color.CadetBlue);
+            textbox.AddKeyword("class", Color.CadetBlue);
+
             textbox.Text = code;
             Controls.Add(textbox);
         }
