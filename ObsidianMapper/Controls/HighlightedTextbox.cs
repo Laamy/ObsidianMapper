@@ -12,7 +12,7 @@ namespace ObsidianMapper.Controls
 
         private Dictionary<string, Color> _keywords = new Dictionary<string, Color>();
 
-        public string Text
+        public new string Text
         {
             get => _txt;
             set
@@ -24,6 +24,11 @@ namespace ObsidianMapper.Controls
         }
 
         public void AddKeyword(string keyword, Color color) => _keywords[keyword] = color;
+        public void AddKeywords(string[] keywords, Color color)
+        {
+            foreach (string keyword in keywords)
+                _keywords[keyword] = color;
+        }
         public void RemoveKeyword(string keyword) => _keywords.Remove(keyword);
 
         protected override void OnPaint(PaintEventArgs e)
@@ -47,12 +52,15 @@ namespace ObsidianMapper.Controls
 
             foreach (string line in lines)
             {
-                string[] tokens = Regex.Split(line, @"( |\t|:)");
+                string[] tokens = Regex.Split(line, @"( |\t|:|{|}|\(|\)|=|-|>|<|\*)");
 
                 foreach (string token in tokens)
                 {
                     if (token == " ")
                         continue;
+
+                    //if (!(token.StartsWith("\t") || token.EndsWith("\t")))
+                    //    token.Trim();
 
                     if (_keywords.ContainsKey(token))
                         brush = new SolidBrush(_keywords[token]);

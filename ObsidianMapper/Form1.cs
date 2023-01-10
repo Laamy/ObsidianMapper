@@ -228,7 +228,7 @@ namespace ObsidianMapper
 
         private void generateCToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CTextbox cDis = new CTextbox("class test {\r\npublic:\r\n\t//code here\r\n};");
+            CTextbox cDis = new CTextbox("\tbool* OnGround() {\r\n\t\tstatic unsigned int offset = *reinterpret_cast<int*>((uintptr_t)findSig(\"80 BF ? ? ? ? 00 74 70 48 8B\") + 2);\r\n\t\treturn reinterpret_cast<bool*>((uintptr_t)this + offset);\r\n\t}");
             cDis.Show();
         }
 
