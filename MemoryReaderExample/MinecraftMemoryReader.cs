@@ -8,7 +8,6 @@ namespace MemoryReaderExample
     {
         // Declare a variable to store the process and a variable to store the handle to the process
         static Process proc;
-        static IntPtr hProcess;
 
         /// <summary>
         /// Check if the Minecraft process is running and open a handle to the process
@@ -22,9 +21,6 @@ namespace MemoryReaderExample
 
             // Get the first instance of the running Minecraft.Windows process
             proc = Process.GetProcessesByName("Minecraft.Windows")[0];
-
-            // Open a handle to the process with read access
-            hProcess = OpenProcess(0x0010, false, proc.Id);
         }
 
         /// <summary>
@@ -37,11 +33,22 @@ namespace MemoryReaderExample
         {
             CheckInject();
 
+            // Get the size of the data to be read
             int size = Marshal.SizeOf<T>();
+
+            // Allocate memory for the buffer
             IntPtr buffer = Marshal.AllocHGlobal(size);
+
+            // Read the data from memory
             ReadProcessMemory(proc.Handle, proc.MainModule.BaseAddress.ToInt64() + offset, buffer, size, out _);
+
+            // Convert the data to the desired type
             T result = Marshal.PtrToStructure<T>(buffer);
+
+            // Free the allocated memory
             Marshal.FreeHGlobal(buffer);
+
+            // Return the result
             return result;
         }
 
@@ -55,10 +62,19 @@ namespace MemoryReaderExample
         {
             CheckInject();
 
+            // Get the size of the data to be written
             int size = Marshal.SizeOf<T>();
+
+            // Allocate memory for the buffer
             IntPtr buffer = Marshal.AllocHGlobal(size);
+
+            // Copy the value to be written into the buffer in the correct format
             Marshal.StructureToPtr(value, buffer, true);
+
+            // Write the data to memory
             WriteProcessMemory(proc.Handle, proc.MainModule.BaseAddress.ToInt64() + offset, buffer, size, out _);
+
+            // Free the allocated memory
             Marshal.FreeHGlobal(buffer);
         }
 
