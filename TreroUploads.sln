@@ -5,6 +5,8 @@ VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObsidianMapper", "ObsidianMapper\ObsidianMapper.csproj", "{FDCC3B49-5AF4-42F1-BDCE-77A91B5536A0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryReaderExample", "MemoryReaderExample\MemoryReaderExample.csproj", "{54A1D1BA-DEBF-4377-9622-641AD99451ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,18 @@ Global
 		{FDCC3B49-5AF4-42F1-BDCE-77A91B5536A0}.Release|ARM64.Build.0 = Release|ARM64
 		{FDCC3B49-5AF4-42F1-BDCE-77A91B5536A0}.Release|x64.ActiveCfg = Release|Any CPU
 		{FDCC3B49-5AF4-42F1-BDCE-77A91B5536A0}.Release|x64.Build.0 = Release|Any CPU
+		{54A1D1BA-DEBF-4377-9622-641AD99451ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54A1D1BA-DEBF-4377-9622-641AD99451ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54A1D1BA-DEBF-4377-9622-641AD99451ED}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{54A1D1BA-DEBF-4377-9622-641AD99451ED}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{54A1D1BA-DEBF-4377-9622-641AD99451ED}.Debug|x64.ActiveCfg = Debug|x64
+		{54A1D1BA-DEBF-4377-9622-641AD99451ED}.Debug|x64.Build.0 = Debug|x64
+		{54A1D1BA-DEBF-4377-9622-641AD99451ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54A1D1BA-DEBF-4377-9622-641AD99451ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54A1D1BA-DEBF-4377-9622-641AD99451ED}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{54A1D1BA-DEBF-4377-9622-641AD99451ED}.Release|ARM64.Build.0 = Release|Any CPU
+		{54A1D1BA-DEBF-4377-9622-641AD99451ED}.Release|x64.ActiveCfg = Release|Any CPU
+		{54A1D1BA-DEBF-4377-9622-641AD99451ED}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
 using System.Windows.Forms;
 
 using Microsoft.VisualBasic;
@@ -76,6 +77,7 @@ namespace ObsidianMapper
             HexListBox.BringToFront();
             HexListBox.AddColor('a', Brushes.ForestGreen);
             HexListBox.AddColor('g', Brushes.Gray);
+            HexListBox.AddColor('d', Brushes.HotPink);
 
             HexListBox.ContextMenuStrip = NodeContextStrip;
 
@@ -180,6 +182,8 @@ namespace ObsidianMapper
                 ref dsadsada
             );
 
+            int realIndex = 0;
+
             foreach (byte bite in buffer)
             {
                 if (!memoryTypes.ContainsKey(index))
@@ -200,10 +204,65 @@ namespace ObsidianMapper
 
                 if (lineValuesPerLine == numBytes) // gonna rewrite all of this so I can list shit in any byte order I want...
                 {
-                    string item = "&g" + string.Format("{0:X2}", offset) + "&r " + line;
+                    string item = "&g" + string.Format("{0:X2}", offset) + "&r " + line + "&d";
                     MemoryVarType result;
 
-                    item += $"({(float)bite}) {(int)bite}";
+                    int readStart = index * numBytes;
+
+                    int floatStart = readStart + 4; // float
+                    int intStart = readStart + 4; // integer
+                    //int doubleStart = readStart + 8; // double
+
+                    if (!(readStart < 0 || readStart + 4 > buffer.Length)) // 1F4982A5040
+                    {
+                        switch (numBytes)
+                        {
+                            case 8:
+                                if (memoryTypes[index] == MemoryVarType.Hex64)
+                                {
+                                    item += $"({(float)Math.Round(float.Parse(BitConverter.ToSingle(buffer, readStart).ToString()), 2)}|{(float)Math.Round(float.Parse(BitConverter.ToSingle(buffer, floatStart).ToString()), 2)}) {BitConverter.ToInt32(buffer, readStart)}|{BitConverter.ToInt32(buffer, intStart)}";
+                                }
+                                else if (memoryTypes[index] == MemoryVarType.Pointer ||
+                                    memoryTypes[index] == MemoryVarType.uintptr_t_VT)
+                                {
+                                    item += $"{((long)Math.Round(double.Parse(BitConverter.ToInt64(buffer, readStart).ToString()), 2)).ToString("X")}";
+                                }
+                                else if (memoryTypes[index] == MemoryVarType.Double)
+                                {
+                                    item += "(NI)"; // not implemented
+                                    //item += $"{(double)Math.Round(double.Parse(BitConverter.ToDouble(buffer, doubleStart).ToString()), 2)}"; // fuck this
+                                }
+                                break;
+
+                            case 4:
+                                if (memoryTypes[index] == MemoryVarType.Hex32)
+                                {
+                                    item += $"({(float)Math.Round(float.Parse(BitConverter.ToSingle(buffer, readStart).ToString()), 2)}) {BitConverter.ToInt32(buffer, readStart)}";
+                                }
+                                else if (memoryTypes[index] == MemoryVarType.Float)
+                                {
+                                    item += $"{(float)Math.Round(float.Parse(BitConverter.ToSingle(buffer, realIndex).ToString()), 2)}";
+                                }
+                                else
+                                if (memoryTypes[index] == MemoryVarType.Int32)
+                                {
+                                    item += $"{BitConverter.ToInt32(buffer, readStart)}";
+                                }
+                                break;
+
+                            case 2:
+                                item += $"({BitConverter.ToInt16(buffer, readStart)})";
+                                break;
+
+                            case 1:
+                                item += $"({buffer[readStart]})";
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        // tried to read past buffer
+                    }
 
                     if (memoryTypes.TryGetValue(index, out result))
                     {
@@ -224,6 +283,7 @@ namespace ObsidianMapper
 
                     index++;
                 }
+                realIndex++;
             }
 
             HexListBox.Items = items;
@@ -235,8 +295,182 @@ namespace ObsidianMapper
             cDis.Show();
         }
 
-        private void HexListBox_Validated(object sender, EventArgs e)
+        private void toolStripMenuItem3_Click(object sender, EventArgs e) // automatically map out keymap (Minecraft.Windows.exe+48E0A9C)
         {
+            if (proc != null && !proc.HasExited)
+            {
+                IFormatProvider provider = CultureInfo.GetCultureInfo("en-US");
+
+                ulong offset;
+
+                if (ulong.TryParse(KeymapAddr.Text.Split('+')[1], NumberStyles.HexNumber, provider, out offset))
+                    PROGRAM_ADDRESS = offset;
+
+                ulong address = (ulong)proc.MainModule.BaseAddress + offset;
+
+                //PROGRAM_BYTES_READ = 0xFF * 4;
+                PROGRAM_ADDRESS = address - (4 * 'W');
+
+                for (int i = 0; i < 0xFF; ++i)
+                {
+                    int memOffset = i;
+
+                    if (!memoryTypes.ContainsKey(memOffset) || !memoryNames.ContainsKey(memOffset))
+                    {
+                        memoryTypes[memOffset] = MemoryVarType.Int32;
+                        memoryNames[memOffset] = ((Keys)memOffset).ToString();
+                    }
+                    else
+                    {
+                        memoryTypes[memOffset] = MemoryVarType.Int32;
+                        memoryNames[memOffset] = ((Keys)memOffset).ToString();
+                    }
+                }
+            }
+        }
+
+        private void toolStripMenuItem4_Click(object sender, EventArgs e) // Minecraft.Windows.exe+48E0A9C
+        {
+            if (proc == null || proc.HasExited)
+                return;
+
+            string intTemplate = "\t\r\n\t\r\n\tpublic int $NAME$\r\n\t{\r\n\t\tget => MMR.ReadInt(baseAddr + $OFFSET$);\r\n\tset => MMR.WriteInt(baseAddr + $OFFSET$, value);\r\n\t}";
+            string floatTemplate = "\t\r\n\t\r\n\tpublic float $NAME$\r\n\t{\r\n\t\tget => MMR.ReadFloat(baseAddr + $OFFSET$);\r\n\t\tset => MMR.WriteFloat(baseAddr + $OFFSET$, value);\r\n\t}";
+            string ptrTemplate = "\t\r\n\t\r\n\tpublic IntPtr $NAME$\r\n\t{\r\n\t\tget => MMR.ReadPointer(baseAddr + $OFFSET$);\r\n\t\tset => MMR.WritePointer(baseAddr + $OFFSET$, value);\r\n\t}";
+            string doubleTemplate = "\t\r\n\t\r\n\tpublic double $NAME$\r\n\t{\r\n\t\tget => MMR.ReadDouble(baseAddr + $OFFSET$);\r\n\t\tset => MMR.WriteDouble(baseAddr + $OFFSET$, value);\r\n\t}";
+            string shortTemplate = "\t\r\n\t\r\n\tpublic short $NAME$\r\n\t{\r\n\t\tget => MMR.ReadShort(baseAddr + $OFFSET$);\r\n\t\tset => MMR.WriteShort(baseAddr + $OFFSET$, value);\r\n\t\t}";
+            string byteTemplate = "\t\r\n\t\r\n\tpublic byte $NAME$\r\n\t{\r\n\t\tget => MMR.ReadByte(baseAddr + $OFFSET$);\r\n\t\tset => MMR.WriteByte(baseAddr + $OFFSET$, value);\r\n\t}";
+
+            if (PROGRAM_ADDRESS == 0)
+                PROGRAM_ADDRESS = (ulong)proc.MainModule.BaseAddress.ToInt64();
+
+            string classStart = $"// Generated using using ObsidianMapper v1.0 by yeemi#9764\r\n// Under the GNU License\r\npublic class MyCSharpClass\r\n{{\r\n\t" +
+                $"public long baseAddr = 0x{((long)PROGRAM_ADDRESS - proc.MainModule.BaseAddress.ToInt64()).ToString("X")};";
+            
+            PROGRAM_ADDRESS = 0;
+
+            string line = "";
+            uint offset = 0x0;
+            int index = 0;
+            int lineValuesPerLine = 0;
+            int numBytes = 8;
+
+            IntPtr baseAddress = new IntPtr((long)PROGRAM_ADDRESS);
+
+            byte[] buffer = new byte[PROGRAM_BYTES_READ];
+
+            int dsadsada = 0;
+            Kernel32.ReadProcessMemory(
+                processHandle,
+                baseAddress,
+                buffer,
+                PROGRAM_BYTES_READ,
+                ref dsadsada
+            );
+
+            int realIndex = 0;
+
+            foreach (byte bite in buffer)
+            {
+                if (!memoryTypes.ContainsKey(index))
+                    memoryTypes.Add(index, MemoryVarType.Hex64);
+
+                if (lineValuesPerLine == 0)
+                {
+                    numBytes = MemoryVarTypeData.GetSize(memoryTypes[index]) / 8;
+                }
+
+                string hex = string.Format("{0:X2}", (int)bite);
+
+                if (hex != "00")
+                    line += hex + " ";
+                else line += ".. ";
+
+                lineValuesPerLine++;
+
+                if (lineValuesPerLine == numBytes) // gonna rewrite all of this so I can list shit in any byte order I want...
+                {
+                    string item = null;
+                    MemoryVarType result;
+
+                    int readStart = index * numBytes;
+
+                    int floatStart = readStart + 4;
+                    int intStart = readStart + 4;
+
+                    if (!(readStart < 0 || readStart + 4 > buffer.Length))
+                    {
+                        switch (numBytes) // ignore VTable pointers & unassigned hex memory
+                        {
+                            case 8:
+                                if (memoryTypes[index] == MemoryVarType.Pointer)
+                                {
+                                    item = ptrTemplate;
+                                    item = item.Replace("$OFFSET$", "0x" + (realIndex - 3).ToString("X"));
+                                }
+                                else if (memoryTypes[index] == MemoryVarType.Double)
+                                {
+                                    item = doubleTemplate;
+                                    item = item.Replace("$OFFSET$", "0x" + (realIndex - 3).ToString("X"));
+                                }
+                                break;
+
+                            case 4:
+                                if (memoryTypes[index] == MemoryVarType.Int32)
+                                {
+                                    item = intTemplate;
+                                    item = item.Replace("$OFFSET$", "0x" + (realIndex - 3).ToString("X"));
+                                }
+                                else if (memoryTypes[index] == MemoryVarType.Float)
+                                {
+                                    item = floatTemplate;
+                                    item = item.Replace("$OFFSET$", "0x" + (realIndex - 3).ToString("X"));
+                                }
+                                break;
+
+                            case 2:
+                                if (memoryTypes[index] == MemoryVarType.Int16)
+                                {
+                                    item = shortTemplate;
+                                    item = item.Replace("$OFFSET$", "0x" + (realIndex - 3).ToString("X"));
+                                }
+                                break;
+
+                            case 1:
+                                if (memoryTypes[index] == MemoryVarType.Int8)
+                                {
+                                    item = byteTemplate;
+                                    item = item.Replace("$OFFSET$", "0x" + (realIndex - 3).ToString("X"));
+                                }
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        // tried to read past buffer
+                    }
+
+                    if (item != null)
+                        item = item.Replace("$NAME$", "_" + memoryNames[index]
+                            .Replace("(", "")
+                            .Replace(")", "")
+                            .Replace(",", "_")
+                            .Replace(" ", "")
+                            );
+
+                    classStart += item;
+
+                    offset += (uint)lineValuesPerLine;
+                    line = "";
+                    lineValuesPerLine = 0;
+
+                    index++;
+                }
+                realIndex++;
+            }
+
+            CTextbox textbox = new CTextbox(classStart + "\r\n}");
+            textbox.Show();
         }
     }
 

@@ -35,11 +35,16 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.memoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AddBytesDropdown = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.KeymapAddr = new System.Windows.Forms.ToolStripTextBox();
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
             this.attachToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.codeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.NodeContextStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
             this.DarkMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -88,7 +93,8 @@
             // memoryToolStripMenuItem
             // 
             this.memoryToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.AddBytesDropdown});
+            this.AddBytesDropdown,
+            this.toolStripMenuItem1});
             this.memoryToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.memoryToolStripMenuItem.Name = "memoryToolStripMenuItem";
             this.memoryToolStripMenuItem.Size = new System.Drawing.Size(66, 20);
@@ -100,8 +106,49 @@
             this.AddBytesDropdown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.AddBytesDropdown.ForeColor = System.Drawing.SystemColors.Control;
             this.AddBytesDropdown.Name = "AddBytesDropdown";
-            this.AddBytesDropdown.Size = new System.Drawing.Size(135, 22);
+            this.AddBytesDropdown.Size = new System.Drawing.Size(180, 22);
             this.AddBytesDropdown.Text = "Add Bytes";
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.toolStripMenuItem1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem2});
+            this.toolStripMenuItem1.ForeColor = System.Drawing.SystemColors.Control;
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem1.Text = "Utils";
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.toolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.KeymapAddr,
+            this.toolStripMenuItem3});
+            this.toolStripMenuItem2.ForeColor = System.Drawing.SystemColors.Control;
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem2.Text = "Keymap";
+            // 
+            // KeymapAddr
+            // 
+            this.KeymapAddr.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.KeymapAddr.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.KeymapAddr.ForeColor = System.Drawing.SystemColors.Control;
+            this.KeymapAddr.Name = "KeymapAddr";
+            this.KeymapAddr.Size = new System.Drawing.Size(100, 23);
+            this.KeymapAddr.Text = "Minecraft.Windows.exe+0";
+            this.KeymapAddr.ToolTipText = "Put the minecraft W key static here";
+            // 
+            // toolStripMenuItem3
+            // 
+            this.toolStripMenuItem3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.toolStripMenuItem3.ForeColor = System.Drawing.SystemColors.Control;
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem3.Text = "Backtrack";
+            this.toolStripMenuItem3.Click += new System.EventHandler(this.toolStripMenuItem3_Click);
             // 
             // attachToolStripMenuItem
             // 
@@ -115,7 +162,8 @@
             // codeToolStripMenuItem
             // 
             this.codeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.generateCToolStripMenuItem});
+            this.generateCToolStripMenuItem,
+            this.toolStripMenuItem4});
             this.codeToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
             this.codeToolStripMenuItem.Name = "codeToolStripMenuItem";
             this.codeToolStripMenuItem.Size = new System.Drawing.Size(49, 20);
@@ -141,6 +189,15 @@
             // 
             this.timer1.Enabled = true;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // toolStripMenuItem4
+            // 
+            this.toolStripMenuItem4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.toolStripMenuItem4.ForeColor = System.Drawing.SystemColors.Control;
+            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem4.Text = "Generate C#";
+            this.toolStripMenuItem4.Click += new System.EventHandler(this.toolStripMenuItem4_Click);
             // 
             // Form1
             // 
@@ -177,6 +234,11 @@
         private System.Windows.Forms.ToolStripMenuItem codeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateCToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip NodeContextStrip;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripTextBox KeymapAddr;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
     }
 }
 
