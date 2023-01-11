@@ -334,18 +334,13 @@ namespace ObsidianMapper
             if (proc == null || proc.HasExited)
                 return;
 
-            string intTemplate = "\t\r\n\t\r\n\tpublic int $NAME$\r\n\t{\r\n\t\tget => MMR.ReadInt(baseAddr + $OFFSET$);\r\n\tset => MMR.WriteInt(baseAddr + $OFFSET$, value);\r\n\t}";
-            string floatTemplate = "\t\r\n\t\r\n\tpublic float $NAME$\r\n\t{\r\n\t\tget => MMR.ReadFloat(baseAddr + $OFFSET$);\r\n\t\tset => MMR.WriteFloat(baseAddr + $OFFSET$, value);\r\n\t}";
-            string ptrTemplate = "\t\r\n\t\r\n\tpublic IntPtr $NAME$\r\n\t{\r\n\t\tget => MMR.ReadPointer(baseAddr + $OFFSET$);\r\n\t\tset => MMR.WritePointer(baseAddr + $OFFSET$, value);\r\n\t}";
-            string doubleTemplate = "\t\r\n\t\r\n\tpublic double $NAME$\r\n\t{\r\n\t\tget => MMR.ReadDouble(baseAddr + $OFFSET$);\r\n\t\tset => MMR.WriteDouble(baseAddr + $OFFSET$, value);\r\n\t}";
-            string shortTemplate = "\t\r\n\t\r\n\tpublic short $NAME$\r\n\t{\r\n\t\tget => MMR.ReadShort(baseAddr + $OFFSET$);\r\n\t\tset => MMR.WriteShort(baseAddr + $OFFSET$, value);\r\n\t\t}";
-            string byteTemplate = "\t\r\n\t\r\n\tpublic byte $NAME$\r\n\t{\r\n\t\tget => MMR.ReadByte(baseAddr + $OFFSET$);\r\n\t\tset => MMR.WriteByte(baseAddr + $OFFSET$, value);\r\n\t}";
-
+            string typeTemplate = "\r\n\r\n\tpublic static $TYPE$ _$NAME$\r\n\t{\r\n\t\tget => MMR.ReadMemory<$TYPE$>(baseAddr + $OFFSET$);\r\n\t\tset => MMR.WriteMemory(baseAddr + $OFFSET$, value);\r\n\t}";
+            
             if (PROGRAM_ADDRESS == 0)
                 PROGRAM_ADDRESS = (ulong)proc.MainModule.BaseAddress.ToInt64();
 
             string classStart = $"// Generated using using ObsidianMapper v1.0 by yeemi#9764\r\n// Under the GNU License\r\npublic class MyCSharpClass\r\n{{\r\n\t" +
-                $"public long baseAddr = 0x{((long)PROGRAM_ADDRESS - proc.MainModule.BaseAddress.ToInt64()).ToString("X")};";
+                $"public static long baseAddr = 0x{((long)PROGRAM_ADDRESS - proc.MainModule.BaseAddress.ToInt64()).ToString("X")};";
             
             PROGRAM_ADDRESS = 0;
 
@@ -375,6 +370,9 @@ namespace ObsidianMapper
                 if (!memoryTypes.ContainsKey(index))
                     memoryTypes.Add(index, MemoryVarType.Hex64);
 
+                if (!memoryNames.ContainsKey(index))
+                    memoryNames.Add(index, "Unknown");
+
                 if (lineValuesPerLine == 0)
                 {
                     numBytes = MemoryVarTypeData.GetSize(memoryTypes[index]) / 8;
@@ -390,7 +388,7 @@ namespace ObsidianMapper
 
                 if (lineValuesPerLine == numBytes) // gonna rewrite all of this so I can list shit in any byte order I want...
                 {
-                    string item = null;
+                    string item = typeTemplate;
                     MemoryVarType result;
 
                     int readStart = index * numBytes;
@@ -404,46 +402,30 @@ namespace ObsidianMapper
                         {
                             case 8:
                                 if (memoryTypes[index] == MemoryVarType.Pointer)
-                                {
-                                    item = ptrTemplate;
-                                    item = item.Replace("$OFFSET$", "0x" + (realIndex - 3).ToString("X"));
-                                }
+                                    item = item.Replace("$TYPE$", "IntPtr");
                                 else if (memoryTypes[index] == MemoryVarType.Double)
-                                {
-                                    item = doubleTemplate;
-                                    item = item.Replace("$OFFSET$", "0x" + (realIndex - 3).ToString("X"));
-                                }
+                                    item = item.Replace("$TYPE$", "double");
                                 break;
 
                             case 4:
                                 if (memoryTypes[index] == MemoryVarType.Int32)
-                                {
-                                    item = intTemplate;
-                                    item = item.Replace("$OFFSET$", "0x" + (realIndex - 3).ToString("X"));
-                                }
+                                    item = item.Replace("$TYPE$", "int");
                                 else if (memoryTypes[index] == MemoryVarType.Float)
-                                {
-                                    item = floatTemplate;
-                                    item = item.Replace("$OFFSET$", "0x" + (realIndex - 3).ToString("X"));
-                                }
+                                    item = item.Replace("$TYPE$", "float");
                                 break;
 
                             case 2:
                                 if (memoryTypes[index] == MemoryVarType.Int16)
-                                {
-                                    item = shortTemplate;
-                                    item = item.Replace("$OFFSET$", "0x" + (realIndex - 3).ToString("X"));
-                                }
+                                    item = item.Replace("$TYPE$", "short");
                                 break;
 
                             case 1:
                                 if (memoryTypes[index] == MemoryVarType.Int8)
-                                {
-                                    item = byteTemplate;
-                                    item = item.Replace("$OFFSET$", "0x" + (realIndex - 3).ToString("X"));
-                                }
+                                    item = item.Replace("$TYPE$", "byte");
                                 break;
                         }
+
+                        item = item.Replace("$OFFSET$", "0x" + (realIndex - (MemoryVarTypeData.GetSize(memoryTypes[index]) / 8 - 1)).ToString("X"));
                     }
                     else
                     {
@@ -458,9 +440,12 @@ namespace ObsidianMapper
                             .Replace(" ", "")
                             );
 
-                    classStart += item;
+                    if (!item.Contains("$TYPE$"))
+                    {
+                        classStart += item;
+                        offset += (uint)lineValuesPerLine;
+                    }
 
-                    offset += (uint)lineValuesPerLine;
                     line = "";
                     lineValuesPerLine = 0;
 

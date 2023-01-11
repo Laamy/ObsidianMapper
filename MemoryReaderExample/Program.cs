@@ -13,7 +13,7 @@ namespace MemoryReaderExample
 
             while (true)
             {
-                Console.WriteLine(Keymap.KEY_W);
+                Console.WriteLine(Keymap.__W);
             }
             Console.ReadKey();
         }
